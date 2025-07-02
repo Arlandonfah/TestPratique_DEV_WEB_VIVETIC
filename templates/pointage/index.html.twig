@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Collaborateurs{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Collaborateurs et leurs cartes</h1>
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Nom</th>
+                    <th>Matricule</th>
+                    <th>Cartes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for collaborateur in collaborateurs %}
+                    <tr>
+                        <td>{{ collaborateur.name }}</td>
+                        <td>{{ collaborateur.pin }}</td>
+                        <td>{{ collaborateur.cards }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">Aucun collaborateur trouvé</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

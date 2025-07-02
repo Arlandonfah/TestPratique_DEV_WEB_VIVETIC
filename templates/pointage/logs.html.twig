@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Logs par Date{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Logs du {{ selectedDate|date('d/m/Y') }}</h1>
+
+        <form class="mb-4 row g-3">
+            <div class="col-md-6">
+                <label for="datePicker" class="form-label">Sélectionnez une date:</label>
+                <input type="date" id="datePicker" name="date" value="{{ selectedDate }}" class="form-control">
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Filtrer</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Matricule</th>
+                        <th>Cartes</th>
+                        <th>Première Entrée</th>
+                        <th>Dernière Sortie</th>
+                        <th>Pauses</th>
+                        <th>Durée Pauses</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                        <tr>
+                            <td>{{ log.name }}</td>
+                            <td>{{ log.pin }}</td>
+                            <td>{{ log.cards }}</td>
+                            <td>{{ log.firstEntry ? log.firstEntry|date('H:i:s') : '-' }}</td>
+                            <td>{{ log.lastExit ? log.lastExit|date('H:i:s') : '-' }}</td>
+                            <td>{{ log.pauseCount }}</td>
+                            <td>{{ log.pauseDuration|date('H:i') }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7">Aucun log trouvé pour cette date</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr('#datePicker', {
+                dateFormat: 'Y-m-d',
+                locale: 'fr'
+            });
+        });
+    </script>
+{% endblock %}
