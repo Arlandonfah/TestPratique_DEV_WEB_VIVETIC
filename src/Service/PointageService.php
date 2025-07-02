@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Entity\LogPortique;
+use App\Entity\LogPortiques;
 
 class PointageService
 {
@@ -11,6 +11,8 @@ class PointageService
         $collaborateurs = [];
 
         foreach ($logs as $log) {
+            if (!$log instanceof LogPortiques) continue;
+            
             $pin = $log->getPin();
 
             if (!isset($collaborateurs[$pin])) {
@@ -78,6 +80,9 @@ class PointageService
             }
         }
 
+        // Convertir la durée en secondes
+        $pauses['duration'] = $pauses['duration'] ?: 0;
+        
         return $pauses;
     }
 }

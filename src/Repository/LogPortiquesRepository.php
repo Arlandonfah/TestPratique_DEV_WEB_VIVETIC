@@ -6,9 +6,6 @@ use App\Entity\LogPortiques;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<LogPortiques>
- */
 class LogPortiquesRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,28 +13,27 @@ class LogPortiquesRepository extends ServiceEntityRepository
         parent::__construct($registry, LogPortiques::class);
     }
 
-    //    /**
-    //     * @return LogPortiques[] Returns an array of LogPortiques objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('l.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getCollaborateursWithCards(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->select('l.name', 'l.pin', 'GROUP_CONCAT(DISTINCT l.cardNo ORDER BY l.cardNo ASC) as cards')
+            ->groupBy('l.name', 'l.pin')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?LogPortiques
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function getLogsByDate(\DateTimeInterface $date): array
+    {
+        $startDate = clone $date;
+        $endDate = clone $date;
+        $endDate->modify('+1 day');
+
+        return $this->createQueryBuilder('l')
+            ->where('l.time >= :start AND l.time < :end')
+            ->setParameter('start', $startDate->format('Y-m-d 00:00:00'))
+            ->setParameter('end', $endDate->format('Y-m-d 00:00:00'))
+            ->orderBy('l.time', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
