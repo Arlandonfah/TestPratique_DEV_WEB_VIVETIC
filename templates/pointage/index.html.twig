@@ -5,7 +5,8 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+    {# Utilisation du chemin direct sans fonction asset() #}
+    <link rel="stylesheet" href="/assets/css/styles.css">
 {% endblock %}
 
 {% block body %}
@@ -28,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle" id="collaborateursTable">
@@ -67,8 +68,8 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-outline-primary" 
-                                                data-bs-toggle="tooltip" 
+                                        <button class="btn btn-sm btn-outline-primary"
+                                                data-bs-toggle="tooltip"
                                                 title="Voir l'historique">
                                             <i class="fas fa-history"></i>
                                         </button>
@@ -86,11 +87,11 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4">
                     <div class="mb-3 mb-md-0">
                         <span class="text-muted">
-                            Affichage de <span id="visibleCount">{{ collaborateurs|length }}</span> 
+                            Affichage de <span id="visibleCount">{{ collaborateurs|length }}</span>
                             sur {{ collaborateurs|length }} collaborateurs
                         </span>
                     </div>
@@ -106,7 +107,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
                 <div class="stats-card" style="opacity: 0; transform: translateY(20px);">
@@ -117,7 +118,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6">
                 <div class="stats-card" style="opacity: 0; transform: translateY(20px);">
                     {% set totalCards = collaborateurs|map(c => c.cards|split(',')|length)|reduce((sum, item) => sum + item, 0) %}
@@ -128,7 +129,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6">
                 <div class="stats-card" style="opacity: 0; transform: translateY(20px);">
                     {% set multiCards = collaborateurs|filter(c => c.cards|split(',')|length > 1)|length %}
@@ -139,7 +140,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-3 col-md-6">
                 <div class="stats-card" style="opacity: 0; transform: translateY(20px);">
                     {% set avgCards = totalCards / (collaborateurs|length > 0 ? collaborateurs|length : 1) %}
@@ -157,5 +158,6 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('assets/js/collaborateurs.js') }}"></script>
+
+    <script src="/assets/js/collaborateurs.js"></script>
 {% endblock %}
