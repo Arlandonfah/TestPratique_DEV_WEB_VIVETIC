@@ -62,3 +62,187 @@ Fonctionnalités
     📊 Statistiques journalières (nombre de collaborateurs, pauses, heures de pauses, sorties nocturnes)
 
     ⏱ Calcul automatique du temps travaillé
+
+# Environnement technique
+
+# Versions logicielles
+
+Composant Version Notes
+
+Symfony 7.0 Framework PHP
+
+PHP 8.2+ Version minimale requise
+
+MySQL 8.0+ Base de données
+
+Node.js 18.x+ Pour les dépendances frontend
+
+Composer 2.5+ Gestion des dépendances PHP
+
+IDE recommandé
+
+    Visual Studio Code (version 1.85+)
+
+        Extensions recommandées :
+
+            Symfony Snippets
+
+            PHP Intelephense
+
+            Twig Language 2
+
+            Prettier - Code formatter
+
+            GitLens
+
+            Docker
+
+# Bibliothèques principales
+
+Type Bibliothèque Version Description
+
+Backend Symfony Framework 7.0 Core du système
+
+Doctrine ORM 3.0 Gestion de la base de données
+
+Frontend Bootstrap 5.3.0 Framework CSS
+
+Font Awesome 6.4.0 Icônes
+
+Flatpickr 4.6.13 Sélecteur de dates
+
+Utilitaires KnpPaginatorBundle 5.9 Pagination
+
+DoctrineExtensions 1.5 Fonctions MySQL avancées
+
+# Structure du projet
+
+TESTPRATIQUE_DEV_WEB_VIVETIC/
+├── bin/ # Exécutables Symfony
+├── config/ # Configuration de l'application
+├── migrations/ # Migrations de base de données
+|\_\_ node_modules/ # Dépendances Node.js
+├── public/ # Racine web
+│ ├── assets/ # Assets statiques
+│ │ ├── css/ # Feuilles de style
+│ │ │ └── styles.css # Style principal
+logs.css # Styles de logs
+│ │ └── js/ # JavaScript
+│ │ └── collaborateurs.js # Scripts interactifs
+app.js
+logs.js
+│ └── index.php # Point d'entrée de l'application
+├── src/ # Code source PHP
+│ ├── Controller/ # Contrôleurs
+│ │ └── PointageController.php # Contrôleur principal
+│ ├── Entity/ # Entités Doctrine
+│ │ └── LogPortiques.php # Entité des logs de pointage
+│ ├── Repository/ # Repository Doctrine
+│ │ └── LogPortiquesRepository.php # Requêtes personnalisées
+│ ├── Service/ # Services métier
+│ │ └── PointageService.php # Traitement des pointages
+│ └── Kernel.php # Noyau de l'application
+├── templates/ # Templates Twig
+│ ├── base.html.twig # Template de base
+│ └── pointage/ # Templates spécifiques
+│ ├── index.html.twig # Liste des collaborateurs
+│ └── logs_jour.html.twig # Pointage journalier
+├── var/ # Fichiers variables (cache, logs)
+├── vendor/ # Dépendances Composer
+├── .env # Variables d'environnement
+├── .env.local # Surcharge locale (ignoré par Git)
+├── .gitignore # Fichiers ignorés par Git
+├── composer.json # Dépendances PHP
+├── composer.lock # Versions exactes des dépendances
+└── README.md # Ce fichier
+
+# Installation
+
+# Prérequis
+
+    PHP 8.2+
+
+    MySQL 8.0+
+
+    Composer 2.5+
+
+    Node.js 18.x+ (optionnel)
+
+# Étapes d'installation
+
+    1- Cloner le dépôt
+
+git clone https://(https://github.com/Arlandonfah/TestPratique_DEV_WEB_VIVETIC)
+
+cd TestPratique_DEV_WEB_VIVETIC
+
+2- Installer les dépendances PHP
+
+composer install
+
+3- Configurer l'environnement
+
+dans le fichier .env
+
+4 - Modifier les variables :
+
+.env
+
+DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/vivetic?serverVersion=8.0&charset=utf8mb4"
+
+5 - Créer la base de données
+
+php bin/console doctrine:database:create
+
+6- Importer les données initiales
+
+mysql -u db_user -p db_name < chemin/vers/log_portiques.sql
+
+7- Installer les dépendances frontend (optionnel)
+
+npm install flatpickr
+
+8- Lancer le serveur de développement
+
+symfony server:start
+
+# Utilisation
+
+# Accès à l'application
+
+    URL locale : http://localhost:8000 ou http://127.0.0.1:8000
+
+    Identifiants par défaut : Aucune authentification nécessaire (peut être ajoutée)
+
+# Page des collaborateurs
+
+    URL : http://localhost:8000/ ou http://127.0.0.1:8000/
+
+    1- Fonctionnalités :
+
+        Recherche instantanée par nom, matricule ou carte
+
+        Tri des colonnes par ordre croissant/décroissant
+
+        Affichage des cartes associées à chaque collaborateur
+
+        Statistiques globales
+
+
+    2- Pointage journalier
+
+    URL : http://localhost:8000/logs-jour ou http://127.0.0.1:8000/logs-jour
+
+    Fonctionnalités :
+
+        Sélection de date avec calendrier interactif
+
+        Affichage des pointages par collaborateur
+
+        Visualisation des plages horaires via timeline
+
+        Calcul automatique des pauses
+
+        Gestion des entrées/sorties nocturnes
+
+        Statistiques journalières consolidées
