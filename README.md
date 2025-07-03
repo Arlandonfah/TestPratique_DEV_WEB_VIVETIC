@@ -186,9 +186,11 @@ symfony server:start
 
 # Utilisation
 
-1- Veuillez activer votre server WAMP ou XAMMP (verifier que les services sont demarré)
-2- Creer une base de données MySQL nommée vivetic et creer la tables log_portiques puis importer les proprietes de cette table.
-2- Copiez le dossier source apres extraction dans le dossier C:\wamp64\www
+    . Veuillez activer votre server WAMP ou XAMMP (verifier que les services sont demarré).
+
+    . Creer une base de données MySQL nommée vivetic et creer la tables log_portiques puis importer les proprietes de cette table.
+
+    . Copiez le dossier source apres extraction dans le dossier C:\wamp64\www
 
 # Accès à l'application
 
