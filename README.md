@@ -1,6 +1,6 @@
 # TestPratique_DEV_WEB_VIVETIC
 
-Une application d'affichage de liste de collaborateur
+Une application web d'affichage de liste de collaborateur, gestion des accès et pointages
 
 # VIVETIC - Application d'affichage de liste de collaborateur et Système de Gestion des Pointages
 
@@ -30,8 +30,9 @@ Solution complète de gestion des accès et pointages
 
 # Description du projet
 
-Ce projet est une application web développée avec Symfony 7 pour la gestion des pointages des collaborateurs via des portiques RFID. L'application permet de visualiser les collaborateurs avec leurs cartes associées et de consulter les pointages journaliers avec des statistiques détaillées, en tenant compte des cas particuliers comme les entrées/sorties nocturnes.
-Fonctionnalités
+Ce projet est une application web développée avec Symfony 7, php 8 et Mysql pour la gestion des pointages des collaborateurs via des portiques RFID. L'application permet de visualiser les collaborateurs avec leurs cartes associées et de consulter les pointages journaliers avec des statistiques détaillées, en tenant compte des cas particuliers comme les entrées/sorties nocturnes.
+
+# Fonctionnalités
 
 1.  Gestion des collaborateurs et leurs cartes
 
@@ -49,9 +50,9 @@ Fonctionnalités
 
     ![alt text](<3 - Statistiques globales (nombre de collaborateurs, cartes, multi-cartes, etc.).png>)
 
-2.  Pointage journalier
+2.  Affichage de la liste des logs, filtré par date et affichage des collaborateurs qui ont un ou des logs pour la date selectionnée
 
-    📅 Filtrage des pointages par date
+    📅 Filtrage des pointages par date indiqué dans la base de données (table log_portiques)
 
     ![alt text](<6 - filtrage des pointers par date.png>)
 
@@ -90,6 +91,8 @@ MySQL 8.0+ Base de données
 Node.js 18.x+ Pour les dépendances frontend
 
 Composer 2.5+ Gestion des dépendances PHP
+
+javascript Langage de programmation
 
 IDE recommandé
 
@@ -183,6 +186,10 @@ symfony server:start
 
 # Utilisation
 
+1- Veuillez activer votre server WAMP ou XAMMP (verifier que les services sont demarré)
+2- Creer une base de données MySQL nommée vivetic et creer la tables log_portiques puis importer les proprietes de cette table.
+2- Copiez le dossier source apres extraction dans le dossier C:\wamp64\www
+
 # Accès à l'application
 
     URL locale : http://localhost:8000 ou http://127.0.0.1:8000
@@ -221,6 +228,10 @@ symfony server:start
         Gestion des entrées/sorties nocturnes
 
         Statistiques journalières consolidées
+
+    3- Exemple de Pointage journalier d'un collaborateurs specifique (date = 2021-03-01 indiqué dans la base de données uniquement)
+
+    URL: http://127.0.0.1:8000/logs-jour?date=2021-03-01
 
 # Documentation technique
 
