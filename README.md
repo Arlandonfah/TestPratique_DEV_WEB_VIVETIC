@@ -222,14 +222,6 @@ symfony server:start
 
 # Documentation technique
 
-# Schéma de base de données
-
-![alt text](20250703_8c899a.png)
-
-# Workflow de traitement des pointages
-
-![alt text](20250703_c54506.png)
-
 # Licence
 
 Ce projet est sous licence opensource.
