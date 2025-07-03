@@ -54,4 +54,23 @@ class LogPortiquesRepository extends ServiceEntityRepository
         
         return $stmt->executeQuery()->fetchAllAssociative();
     }
+
+    public function findLogsByDate(\DateTimeInterface $date): array
+{
+    // Calcule de la plage de dates (du jour même à midi du lendemain)
+    $startDate = clone $date;
+    $startDate->setTime(0, 0, 0);
+    
+    $endDate = clone $date;
+    $endDate->modify('+1 day');
+    $endDate->setTime(12, 0, 0); // Jusqu'à midi le lendemain
+
+    return $this->createQueryBuilder('l')
+        ->where('l.time >= :start AND l.time < :end')
+        ->setParameter('start', $startDate)
+        ->setParameter('end', $endDate)
+        ->orderBy('l.time', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
 }
