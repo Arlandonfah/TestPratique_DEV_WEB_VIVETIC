@@ -73,6 +73,8 @@ Fonctionnalités
 
     ⏱ Calcul automatique du temps travaillé
 
+    ![alt text](<7 - affichage d'un details d'un collaborateur.png>)
+
 # Environnement technique
 
 # Versions logicielles
