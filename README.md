@@ -246,3 +246,13 @@ symfony server:start
         Gestion des entrées/sorties nocturnes
 
         Statistiques journalières consolidées
+
+# Documentation technique
+
+# Schéma de base de données
+
+![alt text](deepseek_mermaid_20250703_8c899a.png)
+
+# Workflow de traitement des pointages
+
+![alt text](deepseek_mermaid_20250703_c54506.png)
