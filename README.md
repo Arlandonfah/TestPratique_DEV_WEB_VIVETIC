@@ -43,11 +43,17 @@ Fonctionnalités
 
     🔍 Recherche et tri interactif
 
+    ![alt text](<2- Recherche et tri interactif.png>)
+
     📊 Statistiques globales (nombre de collaborateurs, cartes, multi-cartes, etc.)
+
+    ![alt text](<3 - Statistiques globales (nombre de collaborateurs, cartes, multi-cartes, etc.).png>)
 
 2.  Pointage journalier
 
     📅 Filtrage des pointages par date
+
+    ![alt text](<6 - filtrage des pointers par date.png>)
 
     👤 Affichage par collaborateur avec :
 
@@ -60,6 +66,8 @@ Fonctionnalités
         ☕ Nombre et durée des pauses
 
     📈 Visualisation graphique des plages horaires via une timeline
+
+    ![alt text](<5 - Affichage par collaborateur avec  Visualisation graphique des plages horaires via une timeline.png>)
 
     📊 Statistiques journalières (nombre de collaborateurs, pauses, heures de pauses, sorties nocturnes)
 
