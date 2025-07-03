@@ -28,10 +28,10 @@ public function logsJour(Request $request, LogPortiquesRepository $repository, P
     $dateString = $request->query->get('date', date('Y-m-d'));
     $selectedDate = new \DateTime($dateString);
 
-    // Récupérer les logs pour la période (jour courant + nuit suivante)
+    // Récupération des logs pour la période (jour courant + nuit suivante)
     $logs = $repository->findLogsByDate($selectedDate);
     
-    // Traiter les logs
+    // Traitement des logs
     $dailyLogs = $service->processDailyLogs($logs, $selectedDate);
     
     return $this->render('pointage/logs_jour.html.twig', [
