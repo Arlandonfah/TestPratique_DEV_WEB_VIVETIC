@@ -13,12 +13,12 @@
                 background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
-            
+
             .navbar-brand {
                 font-weight: 700;
                 letter-spacing: 0.5px;
             }
-            
+
             .nav-link {
                 color: rgba(255, 255, 255, 0.85) !important;
                 font-weight: 500;
@@ -27,26 +27,26 @@
                 border-radius: 50px;
                 margin: 0 3px;
             }
-            
+
             .nav-link:hover, .nav-link.active {
                 color: white !important;
                 background: rgba(255, 255, 255, 0.15);
             }
-            
+
             .navbar-toggler {
                 border-color: rgba(255, 255, 255, 0.3) !important;
             }
-            
+
             .navbar-toggler-icon {
                 background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
             }
-            
+
             footer {
                 background: #f8f9fa;
                 padding: 2rem 0;
                 margin-top: auto;
             }
-            
+
             main {
                 min-height: calc(100vh - 120px);
             }
@@ -58,7 +58,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand" href="{{ path('app_collaborateurs') }}">
-                    <i class="fas fa-id-badge me-2"></i>ViveTIC Pointage
+                    <i class="fas fa-id-badge me-2"></i>VIVETIC
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -66,13 +66,13 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link {{ app.request.get('_route') == 'app_collaborateurs' ? 'active' }}" 
+                            <a class="nav-link {{ app.request.get('_route') == 'app_collaborateurs' ? 'active' }}"
                                href="{{ path('app_collaborateurs') }}">
                                 <i class="fas fa-users me-1"></i> Collaborateurs
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ app.request.get('_route') == 'app_logs_jour' ? 'active' }}" 
+                            <a class="nav-link {{ app.request.get('_route') == 'app_logs_jour' ? 'active' }}"
                                href="{{ path('app_logs_jour') }}">
                                 <i class="fas fa-calendar-day me-1"></i> Pointage Journalier
                             </a>
@@ -91,14 +91,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5>ViveTIC - Gestion des pointages</h5>
+                    <h5>VIVETIC - Gestion des pointages</h5>
                     <p class="text-muted">
                         Solution complète de gestion des accès et pointages pour vos collaborateurs.
                     </p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p class="text-muted mb-0">
-                        &copy; {{ "now"|date("Y") }} ViveTIC. Tous droits réservés.
+                        &copy; {{ "now"|date("Y") }} VIVETIC. Tous droits réservés.
                     </p>
                     <p class="text-muted mb-0">
                         <small>Version 1.0.0</small>
