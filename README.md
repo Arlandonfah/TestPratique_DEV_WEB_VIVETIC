@@ -224,11 +224,11 @@ symfony server:start
 
 # Schéma de base de données
 
-![alt text](deepseek_mermaid_20250703_8c899a.png)
+![alt text](20250703_8c899a.png)
 
 # Workflow de traitement des pointages
 
-![alt text](deepseek_mermaid_20250703_c54506.png)
+![alt text](20250703_c54506.png)
 
 # Licence
 
