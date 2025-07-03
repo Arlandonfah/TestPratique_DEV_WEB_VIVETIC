@@ -22,21 +22,45 @@ class PointageController extends AbstractController
     }
 
    #[Route('/logs-jour', name: 'app_logs_jour')]
-public function logsJour(Request $request, LogPortiquesRepository $repository, PointageService $service): Response
-{
-    // Date par défaut = aujourd'hui
+    public function logsJour(
+    Request $request,
+    LogPortiquesRepository $repository,
+    PointageService $service
+   ): Response {
     $dateString = $request->query->get('date', date('Y-m-d'));
-    $selectedDate = new \DateTime($dateString);
+    $selectedDate = \DateTime::createFromFormat('Y-m-d', $dateString);
 
-    // Récupération des logs pour la période (jour courant + nuit suivante)
-    $logs = $repository->findLogsByDate($selectedDate);
-    
-    // Traitement des logs
-    $dailyLogs = $service->processDailyLogs($logs, $selectedDate);
-    
+    // Récupération des données agrégées
+    $dailySummary = $repository->getDailySummary($selectedDate);
+
+    $processedLogs = $service->processDailySummary($dailySummary, $selectedDate);
+
     return $this->render('pointage/logs_jour.html.twig', [
-        'dailyLogs' => $dailyLogs,
+        'logs' => $processedLogs,
         'selectedDate' => $selectedDate->format('Y-m-d')
+    ]);
+}
+
+#[Route('/collaborateur/{pin}/{date}', name: 'app_collaborateur_details')]
+public function collaborateurDetails(
+    int $pin,
+    string $date,
+    LogPortiquesRepository $repository,
+    PointageService $service
+): Response {
+    $selectedDate = \DateTime::createFromFormat('Y-m-d', $date);
+
+    // Récupération des logs spécifiques au collaborateur
+    $logs = $repository->findLogsByPinAndDate($pin, $selectedDate);
+
+    // Traitement détaillé
+    $details = $service->processCollaborateurDetails($logs, $selectedDate);
+
+    return $this->render('pointage/collaborateur_details.html.twig', [
+        'details' => $details,
+        'collaborateur' => $logs[0]->getName() ?? 'Inconnu',
+        'pin' => $pin,
+        'date' => $date
     ]);
 }
 }

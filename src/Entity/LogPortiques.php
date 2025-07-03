@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\LogPortiquesRepository;
+use App\Enum\EventType;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+use DateTimeInterface;
 
 #[ORM\Entity(repositoryClass: LogPortiquesRepository::class)]
 #[ORM\Table(name: "log_portiques")]
@@ -15,10 +18,10 @@ class LogPortiques
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Name = null;
+    private ?string $name = null;
 
-    #[ORM\Column]
-    private ?\DateTime $time = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTimeInterface $time = null;
 
     #[ORM\Column]
     private ?int $pin = null;
@@ -54,12 +57,12 @@ class LogPortiques
 
     public function getName(): ?string
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setName(string $Name): static
+    public function setName(string $name): static
     {
-        $this->Name = $Name;
+        $this->name = $name;
 
         return $this;
     }
@@ -71,12 +74,12 @@ class LogPortiques
         return $this;
     }
 
-    public function getTime(): ?\DateTime
+    public function getTime(): ?\DateTimeInterface
     {
         return $this->time;
     }
 
-    public function setTime(\DateTime $time): static
+    public function setTime(\DateTimeInterface $time): static
     {
         $this->time = $time;
 
@@ -179,15 +182,42 @@ class LogPortiques
         return $this;
     }
 
+
     public function getEventPointName(): ?string
     {
         return $this->event_point_name;
     }
 
+
     public function setEventPointName(string $event_point_name): static
     {
         $this->event_point_name = $event_point_name;
-
         return $this;
+    }
+
+    public function getNormalizedEventType(): ?EventType
+    {
+        if (!$this->event_point_name) {
+            return null;
+        }
+
+        try {
+            return EventType::fromString($this->event_point_name);
+        } catch (\InvalidArgumentException $e) {
+            // Gestion des valeurs inconnues
+            return null;
+        }
+    }
+
+    public function isEntry(): bool
+    {
+        $type = $this->getNormalizedEventType();
+        return $type && $type === EventType::ENTRY;
+    }
+
+    public function isExit(): bool
+    {
+        $type = $this->getNormalizedEventType();
+        return $type && $type === EventType::EXIT;
     }
 }

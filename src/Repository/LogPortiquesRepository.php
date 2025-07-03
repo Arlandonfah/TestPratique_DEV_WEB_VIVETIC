@@ -14,11 +14,11 @@ class LogPortiquesRepository extends ServiceEntityRepository
         parent::__construct($registry, LogPortiques::class);
     }
 
+
     public function getCollaborateursWithCards(): array
     {
-        // Solution avec requête SQL native pour éviter les problèmes de DQL
         $sql = "
-            SELECT 
+            SELECT
                 Name AS name,
                 pin,
                 GROUP_CONCAT(DISTINCT card_no ORDER BY card_no ASC) AS cards
@@ -30,45 +30,58 @@ class LogPortiquesRepository extends ServiceEntityRepository
         return $conn->executeQuery($sql)->fetchAllAssociative();
     }
 
-    public function getLogsByDate(DateTimeInterface $date): array
-    {
-        $start = $date->format('Y-m-d 00:00:00');
-        
-        // Crée une copie pour éviter de modifier la date originale
-        $endDate = clone $date;
-        $endDate->modify('+1 day');
-        $end = $endDate->format('Y-m-d 00:00:00');
 
-        // Solution avec requête SQL native
+    public function getDailySummary(DateTimeInterface $date): array
+    {
+        $start = (clone $date)->modify('-1 day')->format('Y-m-d 00:00:00');
+        $end = (clone $date)->modify('+1 day')->format('Y-m-d 23:59:59');
+
         $sql = "
-            SELECT * 
-            FROM log_portiques 
-            WHERE time >= :start AND time < :end
-            ORDER BY time ASC
+            SELECT
+                l.pin,
+                l.Name AS name,
+                GROUP_CONCAT(DISTINCT l.card_no) AS cards,
+                MIN(CASE WHEN l.event_point_name = 'entrée' THEN l.time END) AS first_in,
+                MAX(CASE WHEN l.event_point_name = 'sortie' THEN l.time END) AS last_out,
+                COUNT(DISTINCT CASE WHEN l.event_point_name = 'sortie' THEN l.id END) AS exit_count,
+                COUNT(DISTINCT CASE WHEN l.event_point_name = 'entrée' THEN l.id END) AS entry_count
+            FROM log_portiques l
+            WHERE l.time BETWEEN :start AND :end
+            GROUP BY l.pin, l.Name
+            ORDER BY l.Name ASC
         ";
 
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('start', $start);
         $stmt->bindValue('end', $end);
-        
+
         return $stmt->executeQuery()->fetchAllAssociative();
     }
 
-    public function findLogsByDate(\DateTimeInterface $date): array
+
+    public function findLogsByDateRange(DateTimeInterface $start, DateTimeInterface $end): array
+    {
+        return $this->createQueryBuilder('l')
+            ->where('l.time BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->orderBy('l.time', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findLogsByPinAndDate(int $pin, \DateTimeInterface $date): array
 {
-    // Calcule de la plage de dates (du jour même à midi du lendemain)
-    $startDate = clone $date;
-    $startDate->setTime(0, 0, 0);
-    
-    $endDate = clone $date;
-    $endDate->modify('+1 day');
-    $endDate->setTime(12, 0, 0); // Jusqu'à midi le lendemain
+    $start = (clone $date)->modify('-1 day')->format('Y-m-d 00:00:00');
+    $end = (clone $date)->modify('+1 day')->format('Y-m-d 23:59:59');
 
     return $this->createQueryBuilder('l')
-        ->where('l.time >= :start AND l.time < :end')
-        ->setParameter('start', $startDate)
-        ->setParameter('end', $endDate)
+        ->where('l.pin = :pin')
+        ->andWhere('l.time BETWEEN :start AND :end')
+        ->setParameter('pin', $pin)
+        ->setParameter('start', $start)
+        ->setParameter('end', $end)
         ->orderBy('l.time', 'ASC')
         ->getQuery()
         ->getResult();

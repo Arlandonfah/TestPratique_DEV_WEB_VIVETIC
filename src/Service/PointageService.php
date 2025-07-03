@@ -3,17 +3,27 @@
 namespace App\Service;
 
 use App\Entity\LogPortiques;
+use DateTimeInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class PointageService
 {
-    public function processLogs(array $logs): array
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+
+    public function processDailyLogs(array $logs, DateTimeInterface $selectedDate): array
     {
         $collaborateurs = [];
+        $selectedDateStr = $selectedDate->format('Y-m-d');
 
         foreach ($logs as $log) {
-            if (!$log instanceof LogPortiques) continue;
-
             $pin = $log->getPin();
+            $logDate = $log->getTime()->format('Y-m-d');
 
             if (!isset($collaborateurs[$pin])) {
                 $collaborateurs[$pin] = [
@@ -25,127 +35,205 @@ class PointageService
                 ];
             }
 
-            $collaborateurs[$pin]['cards'][$log->getCardNo()] = true;
+            if ($logDate === $selectedDateStr) {
+                $cardNo = $log->getCardNo();
+                if (!in_array($cardNo, $collaborateurs[$pin]['cards'])) {
+                    $collaborateurs[$pin]['cards'][] = $cardNo;
+                }
+            }
 
-            if ($log->getEventPointName() === 'entrée') {
+            if ($log->isEntry()) {
                 $collaborateurs[$pin]['entries'][] = $log->getTime();
-            } elseif ($log->getEventPointName() === 'sortie') {
+            } elseif ($log->isExit()) {
                 $collaborateurs[$pin]['exits'][] = $log->getTime();
             }
         }
 
         $result = [];
         foreach ($collaborateurs as $pin => $data) {
-            $entries = $data['entries'];
-            $exits = $data['exits'];
+            usort($data['entries'], fn($a, $b) => $a <=> $b);
+            usort($data['exits'], fn($a, $b) => $a <=> $b);
 
-            sort($entries);
-            sort($exits);
-
-            $firstEntry = $entries ? min($entries) : null;
-            $lastExit = $exits ? max($exits) : null;
-
-            $pauses = $this->calculatePauses($entries, $exits);
+            $firstEntry = $this->findFirstEntry($data['entries']);
+            $lastExit = $this->findLastExit($data['exits']);
+            $pauses = $this->calculatePauses($data['entries'], $data['exits']);
 
             $result[] = [
                 'name' => $data['name'],
                 'pin' => $pin,
-                'cards' => implode(',', array_keys($data['cards'])),
+                'cards' => $data['cards'],
                 'firstEntry' => $firstEntry,
                 'lastExit' => $lastExit,
                 'pauseCount' => $pauses['count'],
-                'pauseDuration' => $pauses['duration']
+                'pauseDuration' => $this->formatDuration($pauses['duration'])
             ];
         }
 
         return $result;
     }
 
-    public function processDailyLogs(array $logs, \DateTimeInterface $selectedDate): array
-{
-    $collaborateurs = [];
 
-    foreach ($logs as $log) {
-        $pin = $log->getPin();
-        $time = $log->getTime();
+    public function processDailySummary(array $dailySummary, \DateTimeInterface $selectedDate): array
+    {
+        $result = [];
 
-        if (!isset($collaborateurs[$pin])) {
-            $collaborateurs[$pin] = [
-                'name' => $log->getName(),
-                'pin' => $pin,
-                'cards' => [],
-                'entries' => [],
-                'exits' => []
+        foreach ($dailySummary as $row) {
+            $breakCount = min($row['entry_count'], $row['exit_count']) - 1;
+            $breakCount = max(0, $breakCount);
+
+            $firstEntry = $row['first_in'] ? \DateTime::createFromFormat('Y-m-d H:i:s', $row['first_in']) : null;
+            $lastExit = $row['last_out'] ? \DateTime::createFromFormat('Y-m-d H:i:s', $row['last_out']) : null;
+
+            $firstEntryContext = $this->getTimeContext($firstEntry, $selectedDate);
+            $lastExitContext = $this->getTimeContext($lastExit, $selectedDate);
+
+            $result[] = [
+                'name' => $row['name'],
+                'pin' => $row['pin'],
+                'cards' => $row['cards'],
+                'firstEntry' => $firstEntry,
+                'firstEntryContext' => $firstEntryContext,
+                'lastExit' => $lastExit,
+                'lastExitContext' => $lastExitContext,
+                'pauseCount' => $breakCount,
+                'pauseDuration' => $this->calculateBreakDuration($row)
             ];
         }
 
-        // Ajout de la carte si elle n'est pas déjà présente
-        if (!in_array($log->getCardNo(), $collaborateurs[$pin]['cards'])) {
-            $collaborateurs[$pin]['cards'][] = $log->getCardNo();
-        }
-
-        // Stockage des entrées et sorties
-        if ($log->getEventPointName() === 'entrée') {
-            $collaborateurs[$pin]['entries'][] = $time;
-        } elseif ($log->getEventPointName() === 'sortie') {
-            $collaborateurs[$pin]['exits'][] = $time;
-        }
+        return $result;
     }
 
-    $result = [];
-    foreach ($collaborateurs as $pin => $data) {
-        // Triage des horaires
-        usort($data['entries'], function($a, $b) {
-            return $a <=> $b;
-        });
-        usort($data['exits'], function($a, $b) {
-            return $a <=> $b;
-        });
+    private function getTimeContext(?\DateTimeInterface $time, \DateTimeInterface $selectedDate): string
+    {
+        if (!$time) return 'current';
 
-        // Première entrée
-        $firstEntry = $data['entries'] ? min($data['entries']) : null;
-        
-        // Dernière sortie
-        $lastExit = $data['exits'] ? max($data['exits']) : null;
-        
-        // Calcule des pauses
-        $pauses = $this->calculatePauses($data['entries'], $data['exits']);
+        $timeDate = $time->format('Y-m-d');
+        $selected = $selectedDate->format('Y-m-d');
 
-        $result[] = [
-            'name' => $data['name'],
-            'pin' => $pin,
-            'cards' => $data['cards'],
-            'firstEntry' => $firstEntry,
-            'lastExit' => $lastExit,
-            'pauseCount' => $pauses['count'],
-            'pauseDuration' => $pauses['duration']
-        ];
+        if ($timeDate < $selected) return 'previous';
+        if ($timeDate > $selected) return 'next';
+        return 'current';
     }
 
-    return $result;
-}
+    private function findFirstEntry(array $entries): ?\DateTimeInterface
+    {
+        return $entries ? min($entries) : null;
+    }
 
-private function calculatePauses(array $entries, array $exits): array
+    private function findLastExit(array $exits): ?\DateTimeInterface
+    {
+        return $exits ? max($exits) : null;
+    }
+
+    private function calculateBreakDuration(array $row): string
 {
-    $pauses = ['count' => 0, 'duration' => 0];
-    $exitIndex = 0;
+    $pin = $row['pin'];
+    $start = $row['first_in'] ?: null;
+    $end = $row['last_out'] ?: null;
 
-    // On suppose que les tableaux sont triés par ordre chronologique
-    for ($i = 1; $i < count($entries); $i++) {
-       
-        while ($exitIndex < count($exits) && $exits[$exitIndex] < $entries[$i]) {
-            // Vérification si cette sortie est après l'entrée précédente
-            if ($exits[$exitIndex] > $entries[$i - 1]) {
-                $pauses['count']++;
-                $pauses['duration'] += ($entries[$i]->getTimestamp() - $exits[$exitIndex]->getTimestamp());
-                break;
-            }
-            $exitIndex++;
+    if (!$start || !$end) {
+        return '00:00';
+    }
+
+
+    $logs = $this->entityManager->getRepository(LogPortiques::class)
+        ->createQueryBuilder('l')
+        ->where('l.pin = :pin')
+        ->andWhere('l.time BETWEEN :start AND :end')
+        ->setParameter('pin', $pin)
+        ->setParameter('start', $start)
+        ->setParameter('end', $end)
+        ->orderBy('l.time', 'ASC')
+        ->getQuery()
+        ->getResult();
+
+    $totalSeconds = 0;
+    $lastExit = null;
+
+    foreach ($logs as $log) {
+        if ($log->isExit()) {
+            $lastExit = $log->getTime();
+        } elseif ($log->isEntry() && $lastExit) {
+            $totalSeconds += $log->getTime()->getTimestamp() - $lastExit->getTimestamp();
+            $lastExit = null;
         }
     }
 
-    return $pauses;
+    return $this->formatDuration($totalSeconds);
 }
 
-  
+    private function formatDuration(int $seconds): string
+    {
+        if ($seconds <= 0) return '00:00';
+
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+
+        return sprintf('%02d:%02d', $hours, $minutes);
+    }
+
+
+    private function calculatePauses(array $entries, array $exits): array
+    {
+        $pauses = ['count' => 0, 'duration' => 0];
+        $exitIndex = 0;
+        $entryCount = count($entries);
+
+        for ($i = 1; $i < $entryCount; $i++) {
+            while ($exitIndex < count($exits) && $exits[$exitIndex] < $entries[$i - 1]) {
+                $exitIndex++;
+            }
+
+            if ($exitIndex < count($exits) &&
+                $exits[$exitIndex] > $entries[$i - 1] &&
+                $exits[$exitIndex] < $entries[$i]) {
+
+                $pauses['count']++;
+                $pauses['duration'] += $entries[$i]->getTimestamp() - $exits[$exitIndex]->getTimestamp();
+                $exitIndex++;
+            }
+        }
+
+        return $pauses;
+    }
+
+    public function processCollaborateurDetails(array $logs, \DateTimeInterface $selectedDate): array
+{
+    $entries = [];
+    $exits = [];
+    $events = [];
+    $cards = [];
+
+    foreach ($logs as $log) {
+        $cards[$log->getCardNo()] = true;
+
+        $events[] = [
+            'time' => $log->getTime(),
+            'type' => $log->getEventPointName(),
+            'device' => $log->getDeviceName()
+        ];
+
+        if ($log->isEntry()) {
+            $entries[] = $log->getTime();
+        } elseif ($log->isExit()) {
+            $exits[] = $log->getTime();
+        }
+    }
+
+
+    usort($entries, fn($a, $b) => $a <=> $b);
+    usort($exits, fn($a, $b) => $a <=> $b);
+
+
+    $pauses = $this->calculatePauses($entries, $exits);
+
+    return [
+        'firstEntry' => $entries ? min($entries) : null,
+        'lastExit' => $exits ? max($exits) : null,
+        'pauseCount' => $pauses['count'],
+        'pauseDuration' => $this->formatDuration($pauses['duration']),
+        'cards' => array_keys($cards),
+        'events' => $events
+    ];
+}
 }
