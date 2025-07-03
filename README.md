@@ -37,6 +37,8 @@ Fonctionnalités
 
     📋 Affichage de la liste des collaborateurs (nom et matricule) ainsi que la ou les cartes RFID qu'il ont associées
 
+    ![alt text](<1- Affichage de la liste des collaborateurs (nom et matricule) ainsi que la ou les cartes RFID qu'il ont associées.png>)
+
     💳 Visualisation des cartes RFID associées à chaque collaborateur
 
     🔍 Recherche et tri interactif
@@ -117,44 +119,7 @@ DoctrineExtensions 1.5 Fonctions MySQL avancées
 
 # Structure du projet
 
-TESTPRATIQUE_DEV_WEB_VIVETIC/
-├── bin/ # Exécutables Symfony
-├── config/ # Configuration de l'application
-├── migrations/ # Migrations de base de données
-|\_\_ node_modules/ # Dépendances Node.js
-├── public/ # Racine web
-│ ├── assets/ # Assets statiques
-│ │ ├── css/ # Feuilles de style
-│ │ │ └── styles.css # Style principal
-logs.css # Styles de logs
-│ │ └── js/ # JavaScript
-│ │ └── collaborateurs.js # Scripts interactifs
-app.js
-logs.js
-│ └── index.php # Point d'entrée de l'application
-├── src/ # Code source PHP
-│ ├── Controller/ # Contrôleurs
-│ │ └── PointageController.php # Contrôleur principal
-│ ├── Entity/ # Entités Doctrine
-│ │ └── LogPortiques.php # Entité des logs de pointage
-│ ├── Repository/ # Repository Doctrine
-│ │ └── LogPortiquesRepository.php # Requêtes personnalisées
-│ ├── Service/ # Services métier
-│ │ └── PointageService.php # Traitement des pointages
-│ └── Kernel.php # Noyau de l'application
-├── templates/ # Templates Twig
-│ ├── base.html.twig # Template de base
-│ └── pointage/ # Templates spécifiques
-│ ├── index.html.twig # Liste des collaborateurs
-│ └── logs_jour.html.twig # Pointage journalier
-├── var/ # Fichiers variables (cache, logs)
-├── vendor/ # Dépendances Composer
-├── .env # Variables d'environnement
-├── .env.local # Surcharge locale (ignoré par Git)
-├── .gitignore # Fichiers ignorés par Git
-├── composer.json # Dépendances PHP
-├── composer.lock # Versions exactes des dépendances
-└── README.md # Ce fichier
+![alt text](<Capture d’écran 2025-07-03 194511.png>)
 
 # Installation
 
