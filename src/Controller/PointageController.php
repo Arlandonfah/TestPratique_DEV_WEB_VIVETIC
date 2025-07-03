@@ -15,24 +15,27 @@ class PointageController extends AbstractController
     public function collaborateurs(LogPortiquesRepository $repository): Response
     {
         $collaborateurs = $repository->getCollaborateursWithCards();
-        
+
         return $this->render('pointage/index.html.twig', [
             'collaborateurs' => $collaborateurs
         ]);
     }
 
     #[Route('/logs', name: 'app_logs')]
-    public function logs(Request $request, LogPortiquesRepository $repository, PointageService $service): Response
-    {
-        $date = $request->query->get('date', date('Y-m-d'));
-        $selectedDate = new \DateTime($date);
+public function logs(Request $request, LogPortiquesRepository $repository, PointageService $service): Response
+{
+    $date = $request->query->get('date', date('Y-m-d'));
+    $selectedDate = new \DateTime($date);
 
-        $logs = $repository->getLogsByDate($selectedDate);
-        $processedLogs = $service->processLogs($logs);
+    // Récupérer les logs du jour sélectionné
+    $logs = $repository->getLogsByDate($selectedDate);
 
-        return $this->render('pointage/logs.html.twig', [
-            'logs' => $processedLogs,
-            'selectedDate' => $selectedDate->format('Y-m-d')
-        ]);
-    }
+    // Traiter les logs pour la journée
+    $dailyLogs = $service->processDailyLogs($logs, $selectedDate);
+
+    return $this->render('pointage/logs.html.twig', [
+        'logs' => $dailyLogs,
+        'selectedDate' => $selectedDate->format('Y-m-d')
+    ]);
+}
 }
