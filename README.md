@@ -2,30 +2,28 @@
 
 Une application d'affichage de liste de collaborateur
 
-#VIVETIC - Système de Gestion des Pointages
+# VIVETIC - Application d'affichage de liste de collaborateur et Système de Gestion des Pointages
 
 Solution complète de gestion des accès et pointages
 
-#Table des matières
+# Table des matières
 
-    Description du projet
+1- Description du projet
 
-    Fonctionnalités
+2- Fonctionnalités
 
-    Environnement technique
+3- Environnement technique
 
-    Structure du projet
+4- Structure du projet
 
-    Installation
+5- Installation
 
-    Utilisation
+6 - Utilisation
 
-    Personnalisation
+7 - Personnalisation
 
-    Déploiement en production
+8 - Documentation technique
 
-    Documentation technique
+9 - Licence
 
-    Licence
-
-    Support
+10 - Support
