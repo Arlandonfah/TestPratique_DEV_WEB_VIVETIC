@@ -229,3 +229,13 @@ symfony server:start
 # Workflow de traitement des pointages
 
 ![alt text](deepseek_mermaid_20250703_c54506.png)
+
+# Licence
+
+Ce projet est sous licence opensource.
+
+# Support
+
+Pour tout problème ou question, veuillez ouvrir une issue sur le dépôt GitHub.
+
+TestPratique_DEV_WEB_VIVETIC © 2025 - Solution complète de gestion des accès et pointages
