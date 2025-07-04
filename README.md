@@ -237,6 +237,46 @@ symfony server:start
 
 # Documentation technique
 
+1. Introduction
+
+Objectif : Fournir une vue d'ensemble technique de l'application web d'affichage de liste de collaborateur, gestion des accès et pointages chez vivetic.
+
+Portée : Couvre l'architecture, les technologies, les flux de données et les procédures de lancement du serveur
+
+2. Architecture Globale
+
+Schéma : Modèle Monolithique
+Patterns : MVC (Model-View-Controller)
+
+3. Technologies Utilisées
+
+Composant Technologies
+Frontend HTML5 (twig) /CSS3 (bootstrap), Webpack, composer
+Backend Node.js 18+, Symfony 7, PHP 8+, JS
+Base de Données Mysql 9+
+
+4. Structure du Code
+
+![alt text](strucc.png)
+
+5. Flux de Données Clés
+
+![alt text](flux.png)
+
+6. Configuration et Variables d'Environnement
+
+###> symfony/framework-bundle ###
+APP_ENV=dev
+APP_SECRET=
+###< symfony/framework-bundle ###
+###> doctrine/doctrine-bundle ###
+DATABASE_URL="mysql://root:@127.0.0.1:3306/vivetic?serverVersion=8.0&charset=utf8mb4"
+###< doctrine/doctrine-bundle ###
+
+Version : 1.0.0
+Dernière Mise à Jour : 04 Juillet 2025
+Contact Technique : arlandon.dev@gmail.com
+
 # Licence
 
 Ce projet est sous licence opensource.
